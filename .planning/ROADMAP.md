@@ -16,28 +16,28 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAPT-01 | Phase 1 | Pending |
-| CAPT-02 | Phase 1 | Pending |
-| CAPT-03 | Phase 1 | Pending |
-| CAPT-04 | Phase 1 | Pending |
-| STOR-01 | Phase 1 | Pending |
-| STOR-02 | Phase 1 | Pending |
-| ENRI-01 | Phase 1 | Pending |
-| ENRI-02 | Phase 1 | Pending |
-| ENRI-03 | Phase 1 | Pending |
-| ENRI-04 | Phase 1 | Pending |
-| ENRI-05 | Phase 1 | Pending |
-| REVW-01 | Phase 1 | Pending |
+| CAPT-01 | Phase 1 | ✓ Complete |
+| CAPT-02 | Phase 1 | ✓ Complete |
+| CAPT-03 | Phase 1 | ✓ Complete |
+| CAPT-04 | Phase 1 | ✓ Complete |
+| STOR-01 | Phase 1 | ✓ Complete |
+| STOR-02 | Phase 1 | ✓ Complete |
+| ENRI-01 | Phase 1 | ✓ Complete |
+| ENRI-02 | Phase 1 | ✓ Complete |
+| ENRI-03 | Phase 1 | ✓ Complete |
+| ENRI-04 | Phase 1 | ✓ Complete |
+| ENRI-05 | Phase 1 | ✓ Complete |
+| REVW-01 | Phase 1 | ✓ Complete |
 
 Plans:
 **Wave 1**
-- [ ] 01-01-PLAN.md — Capture Pipeline: Python project, DB module, TUI, Hyprland config (CAPT-01,02,03,04, STOR-01,02)
+- [x] 01-01-PLAN.md — Capture Pipeline: Python project, DB module, TUI, Hyprland config (CAPT-01,02,03,04, STOR-01,02)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01-02-PLAN.md — Nexus Capture View: API routes, schema, frontend cards, detail panel (REVW-01)
+- [x] 01-02-PLAN.md — Nexus Capture View: API routes, schema, frontend cards, detail panel (REVW-01)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01-03-PLAN.md — Enrichment Pipeline: opencode run subprocess, enrich API, CLI flag (ENRI-01,02,03,04,05)
+- [x] 01-03-PLAN.md — Enrichment Pipeline: opencode run subprocess, enrich API, CLI flag (ENRI-01,02,03,04,05)
 
 ## Phase 2: Wiki Sync & Karakeep
 
