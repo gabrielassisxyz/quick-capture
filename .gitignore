@@ -52,3 +52,5 @@ Thumbs.db
 
 # Opencode 
 opencode.json
+.opencode/
+.ai-jail
