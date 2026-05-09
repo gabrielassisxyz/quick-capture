@@ -49,9 +49,10 @@ Capture a thought in under 5 seconds, from hotkey to saved entry. The enrichment
 
 - **Environment:** Arch Linux with Hyprland (Omarchy), Ghostty terminal
 - **Wiki immutability:** Agent writes only to `wiki/` subdirectory in the Obsidian vault; daily/weekly rollups must go there
-- **Nexus DB:** Must use existing `~/repositories/nexus/nexus.db` schema — extend, don't replace
+- **Nexus DB:** Must use existing `~/repositories/nexus/nexus.db` — add new tables, don't modify existing schema
 - **Processing model:** `opencode run` for enrichment (not a custom API server)
 - **Capture friction:** Hotkey to saved entry must be under 5 seconds for the capture itself
+- **Tech stack:** Modern Python (uv, ruff, ty) — single project for capture, storage, enrichment, sync
 
 ## Key Decisions
 
