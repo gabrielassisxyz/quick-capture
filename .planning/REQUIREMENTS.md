@@ -63,31 +63,31 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAPT-01 | — | Pending |
-| CAPT-02 | — | Pending |
-| CAPT-03 | — | Pending |
-| CAPT-04 | — | Pending |
-| STOR-01 | — | Pending |
-| STOR-02 | — | Pending |
-| STOR-03 | — | Pending |
-| STOR-04 | — | Pending |
-| STOR-05 | — | Pending |
-| ENRI-01 | — | Pending |
-| ENRI-02 | — | Pending |
-| ENRI-03 | — | Pending |
-| ENRI-04 | — | Pending |
-| ENRI-05 | — | Pending |
-| ENRI-06 | — | Pending |
-| ENRI-07 | — | Pending |
-| REVW-01 | — | Pending |
-| REVW-02 | — | Pending |
-| REVW-03 | — | Pending |
-| REVW-04 | — | Pending |
+| CAPT-01 | Phase 1 | Pending |
+| CAPT-02 | Phase 1 | Pending |
+| CAPT-03 | Phase 1 | Pending |
+| CAPT-04 | Phase 1 | Pending |
+| STOR-01 | Phase 1 | Pending |
+| STOR-02 | Phase 1 | Pending |
+| ENRI-01 | Phase 1 | Pending |
+| ENRI-02 | Phase 1 | Pending |
+| ENRI-03 | Phase 1 | Pending |
+| ENRI-04 | Phase 1 | Pending |
+| ENRI-05 | Phase 1 | Pending |
+| REVW-01 | Phase 1 | Pending |
+| STOR-03 | Phase 2 | Pending |
+| STOR-04 | Phase 2 | Pending |
+| STOR-05 | Phase 2 | Pending |
+| REVW-03 | Phase 2 | Pending |
+| ENRI-06 | Phase 3 | Pending |
+| ENRI-07 | Phase 3 | Pending |
+| REVW-02 | Phase 3 | Pending |
+| REVW-04 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20 ⚠️
+- Mapped to phases: 20
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-09*
