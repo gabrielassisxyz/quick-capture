@@ -1,0 +1,71 @@
+[project]
+name = "quick-capture"
+version = "0.1.0"
+description = "Frictionless inbox capture for Hyprland — hotkey to floating terminal to saved entry, then enrich via LLM with wiki context"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [
+    { name = "Gabriel Assis", email = "gabriel.assis.xyz@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+quick-capture = "quick_capture:main"
+
+[project.urls]
+Homepage = "https://github.com/gabrielassisxyz/quick-capture"
+Issues = "https://github.com/gabrielassisxyz/quick-capture/issues"
+Repository = "https://github.com/gabrielassisxyz/quick-capture"
+
+[dependency-groups]
+dev = [{ include-group = "lint" }, { include-group = "test" }, { include-group = "audit" }]
+lint = ["ruff", "ty"]
+test = ["pytest", "pytest-cov"]
+audit = ["pip-audit"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/quick_capture"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D", "COM812", "ISC001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "PLR2004", "SLF001"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--tb=short", "-q"]
+
+[tool.ty.terminal]
+error-on-warning = true
+
+[tool.ty.environment]
+python-version = "3.12"
+
+[tool.ty.rules]
+possibly-unresolved-reference = "error"
+unused-ignore-comment = "warn"
