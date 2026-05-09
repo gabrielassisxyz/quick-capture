@@ -15,7 +15,7 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 | Phase | Name | Status | Plans | Progress |
 |-------|------|--------|-------|----------|
-| 1 | Capture & Enrich MVP | ○ Not started | 0/0 | 0% |
+| 1 | Capture & Enrich MVP | ○ Not started | 0/3 | 0% |
 | 2 | Wiki Sync & Karakeep | ○ Not started | 0/0 | 0% |
 | 3 | Flexible Processing | ○ Not started | 0/0 | 0% |
 | 4 | Dispatch Discussion | ○ Not started | 0/0 | 0% |

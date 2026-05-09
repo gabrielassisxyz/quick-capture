@@ -6,6 +6,7 @@
 
 **Goal:** End-to-end slice working: hotkey → multiline capture → save to DB → enrich via opencode run → view in Nexus
 **Mode:** mvp
+**Plans:** 3 plans
 **Success Criteria:**
 1. User presses Hyprland hotkey and a floating terminal appears
 2. User types multiline text, presses submit, and the terminal closes
@@ -27,6 +28,11 @@
 | ENRI-04 | Phase 1 | Pending |
 | ENRI-05 | Phase 1 | Pending |
 | REVW-01 | Phase 1 | Pending |
+
+Plans:
+- [ ] 01-01-PLAN.md — Capture Pipeline: Python project, DB module, TUI, Hyprland config (CAPT-01,02,03,04, STOR-01,02)
+- [ ] 01-02-PLAN.md — Nexus Capture View: API routes, schema, frontend cards, detail panel (REVW-01)
+- [ ] 01-03-PLAN.md — Enrichment Pipeline: opencode run subprocess, enrich API, CLI flag (ENRI-01,02,03,04,05)
 
 ## Phase 2: Wiki Sync & Karakeep
 
