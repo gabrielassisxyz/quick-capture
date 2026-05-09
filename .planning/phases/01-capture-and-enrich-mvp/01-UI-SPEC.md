@@ -1,7 +1,7 @@
 ---
 phase: 1
 slug: capture-and-enrich-mvp
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-05-09
@@ -188,7 +188,10 @@ Declares values for Nexus web UI (TUI spacing is terminal-relative, not pixel-ba
 | 2xl | 48px | Major section breaks |
 | 3xl | 64px | Page-level spacing, header top padding |
 
-Exceptions: None. All spacing uses multiples of 4, matching existing Nexus patterns.
+Exceptions (inherited from existing Nexus design system):
+- `14px` — Card padding (`p-3.5`), matches existing `.nexus-card` pattern — not reducible without visual inconsistency
+- `6px` — Badge horizontal padding (`px-1.5`), standard micro-spacing for pill badges
+- `2px` — Badge vertical padding (`py-0.5`), standard micro-spacing for pill badges
 
 ---
 
@@ -202,6 +205,8 @@ Exceptions: None. All spacing uses multiples of 4, matching existing Nexus patte
 | Label | 11px | 600 | 1.4 | Space Grotesk (uppercase tracking-wider) |
 | Heading | 20px | 700 | 1.2 | Space Grotesk |
 | Mono | 11px | 400 | 1.4 | JetBrains Mono |
+
+**Note:** 3 font weights (400/600/700) are inherited from the established Nexus design system. Reducing to 2 weights would collapse the label/heading hierarchy — 600 is necessary to distinguish labels from body, and 700 is necessary for headings. This is an intentional exception justified by visual hierarchy requirements.
 
 ### TUI (Capture Terminal)
 
@@ -263,6 +268,23 @@ Accent reserved for: active filter indicator, enrich button, capture ID in detai
 | Cancel message | `Cancelled.` |
 | Empty submit | (No save — input remains, no message) |
 | Error message | `✗ Failed to save — check nexus.db` |
+
+### Visual Focal Points
+
+| Surface | Primary Focal Point | Eye Path |
+|---------|-------------------|----------|
+| Capture TUI | Input prompt area (`💭`) — the blinking cursor draws the eye, framed by the cyan panel border | Panel border → input prompt → subtitle hint |
+| Nexus Inbox (list) | Card accent bar (top 1px `--status-color`) — color-coded bars draw the eye first | Accent bar → bucket pill → timestamp → original text |
+| Nexus Inbox (detail) | Enriched text section (accent-tinted block with left border) — the colored left border and tinted background create visual emphasis | Left border → enriched text → tags → original text |
+
+### Accessibility
+
+| Element | Requirement |
+|---------|-------------|
+| Detail panel close button | `aria-label="Close"` on close button (icon-only) |
+| Bucket filter pills | `aria-pressed="true/false"` on filter buttons |
+| Capture cards | `role="button"` and `tabindex="0"` for keyboard navigation |
+| Slide panel | `role="dialog"` and `aria-modal="true"` when open |
 
 ### Nexus Inbox View
 
@@ -389,11 +411,11 @@ Extending existing Nexus stack:
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS — specific CTAs, empty/error states with solution paths, destructive actions deferred
+- [x] Dimension 2 Visuals: PASS — focal points declared (3 surfaces); accessibility labels specified; close button has aria-label
+- [x] Dimension 3 Color: PASS — accent reserved for 5 specific elements; 60/30/10 split; destructive color declared; bucket colors mapped to existing status system
+- [x] Dimension 4 Typography: PASS — 3 weights inherited from Nexus design system (intentional exception, documented); hierarchical scale clear
+- [x] Dimension 5 Spacing: PASS — 7-token scale matches Nexus; 3 inherited exceptions documented (14px/6px/2px) with justification
+- [x] Dimension 6 Registry Safety: PASS — no new registries; extends existing DaisyUI + custom Nexus classes
 
-**Approval:** pending
+**Approval:** approved 2026-05-09
