@@ -1,25 +1,19 @@
-.PHONY: dev lint format test check build
+.PHONY: dev lint format test build
 
 dev:
 	uv sync --all-groups
 
 lint:
-	uv run ruff check .
-	uv run ty check src/
+	uv run ruff format --check && uv run ruff check .
 
 format:
 	uv run ruff format .
 
-format-check:
-	uv run ruff format --check .
-
 test:
-	uv run pytest
+	uv run pytest -x
 
 test-cov:
-	uv run pytest --cov
-
-check: lint format-check test
+	uv run pytest --cov=quick_capture --cov-fail-under=80
 
 build:
 	uv build

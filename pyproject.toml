@@ -20,11 +20,12 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
+    "prompt-toolkit>=3.0.52",
     "rich>=13.0.0",
 ]
 
 [project.scripts]
-quick-capture = "quick_capture:main"
+quick-capture = "quick_capture.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/gabrielassisxyz/quick-capture"
