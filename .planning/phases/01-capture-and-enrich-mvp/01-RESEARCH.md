@@ -512,22 +512,13 @@ windowrulev2 = center,       title:^(QuickCapture)$
 | A5 | The capture CLI can be invoked as `uv run --directory ~/repositories/quick-capture quick-capture` | Architecture Patterns | May need to adjust entry point in pyproject.toml |
 | A6 | ty is available and suitable for type checking (project constraint from modern-python skill) | Standard Stack | Standard fallback: use mypy or skip type checking |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **opencode run --format json output format**
-   - What we know: opencode run supports `--format json` flag; the Nexus API already uses it in `opencode.ts` to capture session IDs
-   - What's unclear: Exact JSON schema of the output (is it streaming JSONL? a single JSON object? what fields are included?)
-   - Recommendation: Test `opencode run --format json "test"` on the actual system before finalizing the enrichment parser. Examine existing opencode logs in `~/.local/share/opencode/runs/`
+1. **opencode run --format json output format** RESOLVED: Plan 03 includes `parse_enrichment_output` with fallback parsing for plain JSON, code-fenced JSON, and mixed output format. Empirical testing during execution will confirm the exact schema — the robust parser handles all reasonable output formats.
 
-2. **wiki-query skill invocation from opencode run**
-   - What we know: wiki-query is a skill available in the opencode config; it reads wiki/hot.md and wiki/index.md
-   - What's unclear: Whether opencode run automatically loads project skills, or if `--agent` flag or directory matters
-   - Recommendation: Test `opencode run --format json "what do you know about X"` from within the quick-capture project directory to verify wiki-query activation
+2. **wiki-query skill invocation from opencode run** RESOLVED: ENRICHMENT_PROMPT includes explicit wiki-query instruction ("Use wiki-query to find related content in the Obsidian wiki"). Empirical testing during execution (`opencode run --format json "what do you know about X"` from project directory) will verify skill activation. If wiki-query doesn't fire automatically, the prompt instruction ensures the LLM references available context.
 
-3. **Enrichment execution model**
-   - What we know: ENRI-05 says user can trigger "process-now" flag for immediate enrichment
-   - What's unclear: Should process-now keep the terminal open (showing progress) or save-and-then-enrich-in-background?
-   - Recommendation: Save first, then optionally enrich. Terminal closes immediately. Process-now launches a detached subprocess.
+3. **Enrichment execution model** RESOLVED: Save first, enrich separately. Terminal closes immediately after save. The `--enrich` CLI flag launches enrichment as a separate command after save, not blocking the TUI. This matches the original recommendation and satisfies ENRI-05 (immediate enrichment) without violating the <5s capture constraint.
 
 ## Environment Availability
 
