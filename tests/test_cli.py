@@ -72,4 +72,3 @@ class TestMain:
             with pytest.raises(SystemExit):
                 main()
             mock_exit.assert_called_with(1)
-

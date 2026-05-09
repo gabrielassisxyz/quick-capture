@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import json
-import sqlite3
 import subprocess
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import sqlite3
 
 from quick_capture.db import get_capture, save_enrichment, update_capture
 
@@ -79,10 +81,11 @@ def parse_enrichment_output(output: str) -> dict[str, Any]:
     # Try parsing the whole output as JSON first
     try:
         result = json.loads(text)
-        _validate_bucket(result)
-        return result
     except json.JSONDecodeError:
         pass
+    else:
+        _validate_bucket(result)
+        return result
 
     # Try finding the last valid JSON object in the output (line by line from end)
     for raw_line in reversed(output.strip().split("\n")):
@@ -90,10 +93,11 @@ def parse_enrichment_output(output: str) -> dict[str, Any]:
         if stripped.startswith("{"):
             try:
                 result = json.loads(stripped)
-                _validate_bucket(result)
-                return result
             except json.JSONDecodeError:
                 continue
+            else:
+                _validate_bucket(result)
+                return result
 
     msg = "Could not parse enrichment JSON from output"
     raise ValueError(msg)
@@ -122,7 +126,7 @@ def enrich_capture(capture_id: str, conn: sqlite3.Connection | None = None) -> d
 
     try:
         result = subprocess.run(  # noqa: S603
-            ["opencode", "run", "--format", "json", prompt],
+            ["opencode", "run", "--format", "json", prompt],  # noqa: S607
             capture_output=True,
             text=True,
             timeout=120,
@@ -155,4 +159,3 @@ def enrich_capture(capture_id: str, conn: sqlite3.Connection | None = None) -> d
     )
 
     return enrichment
-

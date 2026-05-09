@@ -1,7 +1,22 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: 01
+status: unknown
+last_updated: "2026-05-09T23:36:47.216Z"
+progress:
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 0
+  percent: 0
+---
+
 # State: Quick Capture
 
 **Last updated:** 2026-05-09
-**Current phase:** 1 (Capture & Enrich MVP)
+**Current phase:** 01
 **Project status:** ready to execute
 
 ## Project Reference
@@ -9,7 +24,7 @@
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Capture a thought in under 5 seconds, from hotkey to saved entry.
-**Current focus:** Phase 1 — Capture & Enrich MVP
+**Current focus:** Phase 01 — capture-and-enrich-mvp
 
 ## Phase Progress
 

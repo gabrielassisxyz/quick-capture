@@ -1,7 +1,5 @@
 """Shared test fixtures for Quick Capture tests."""
 
-import sqlite3
-
 import pytest
 
 from quick_capture.db import init_captures_db, save_capture

@@ -1,14 +1,14 @@
 """Tests for the database module."""
 
-import sqlite3
-
 import pytest
 
 from quick_capture.db import (
     get_capture,
+    get_enrichment,
     init_captures_db,
     list_captures,
     save_capture,
+    save_enrichment,
     update_capture,
 )
 
@@ -216,8 +216,6 @@ class TestSaveEnrichment:
 
     def test_inserts_enrichment_and_updates_status(self, db):
         """save_enrichment inserts row and sets capture status to 'enriched'."""
-        from quick_capture.db import save_enrichment
-
         capture_id = save_capture("Test thought", conn=db)
         enrichment_id = save_enrichment(
             capture_id=capture_id,
@@ -235,8 +233,6 @@ class TestSaveEnrichment:
 
     def test_enrichment_stores_json_fields(self, db):
         """save_enrichment stores tags and wikilinks as JSON."""
-        from quick_capture.db import get_enrichment, save_enrichment
-
         capture_id = save_capture("Test", conn=db)
         save_enrichment(
             capture_id=capture_id,

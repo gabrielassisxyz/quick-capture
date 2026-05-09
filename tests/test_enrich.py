@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from quick_capture.cli import main
 from quick_capture.db import get_capture, save_capture
 from quick_capture.enrich import (
     ENRICHMENT_PROMPT,
@@ -21,12 +22,14 @@ class TestParseEnrichmentOutput:
 
     def test_parses_valid_json_with_all_fields(self) -> None:
         """Plain JSON object with all fields is parsed correctly."""
-        output = json.dumps({
-            "bucket": "Task",
-            "enriched_text": "Develop this idea further",
-            "tags": ["ideas", "capture"],
-            "wikilinks": ["[[Projects]]"],
-        })
+        output = json.dumps(
+            {
+                "bucket": "Task",
+                "enriched_text": "Develop this idea further",
+                "tags": ["ideas", "capture"],
+                "wikilinks": ["[[Projects]]"],
+            }
+        )
         result = parse_enrichment_output(output)
         assert result["bucket"] == "Task"
         assert result["enriched_text"] == "Develop this idea further"
@@ -35,12 +38,14 @@ class TestParseEnrichmentOutput:
 
     def test_handles_json_wrapped_in_code_fences(self) -> None:
         """JSON wrapped in ```json ... ``` code fences is extracted."""
-        inner = json.dumps({
-            "bucket": "Idea",
-            "enriched_text": "A creative thought",
-            "tags": ["creative"],
-            "wikilinks": [],
-        })
+        inner = json.dumps(
+            {
+                "bucket": "Idea",
+                "enriched_text": "A creative thought",
+                "tags": ["creative"],
+                "wikilinks": [],
+            }
+        )
         output = f"```json\n{inner}\n```"
         result = parse_enrichment_output(output)
         assert result["bucket"] == "Idea"
@@ -48,12 +53,14 @@ class TestParseEnrichmentOutput:
 
     def test_extracts_last_json_object_from_mixed_output(self) -> None:
         """Last JSON object is extracted from output with preamble text."""
-        inner = json.dumps({
-            "bucket": "Reference",
-            "enriched_text": "A useful link",
-            "tags": [],
-            "wikilinks": ["[[Reading]]"],
-        })
+        inner = json.dumps(
+            {
+                "bucket": "Reference",
+                "enriched_text": "A useful link",
+                "tags": [],
+                "wikilinks": ["[[Reading]]"],
+            }
+        )
         output = f"Here is the enrichment:\n{inner}"
         result = parse_enrichment_output(output)
         assert result["bucket"] == "Reference"
@@ -65,24 +72,28 @@ class TestParseEnrichmentOutput:
 
     def test_rejects_invalid_bucket(self) -> None:
         """Invalid bucket value raises ValueError."""
-        output = json.dumps({
-            "bucket": "InvalidBucket",
-            "enriched_text": "text",
-            "tags": [],
-            "wikilinks": [],
-        })
+        output = json.dumps(
+            {
+                "bucket": "InvalidBucket",
+                "enriched_text": "text",
+                "tags": [],
+                "wikilinks": [],
+            }
+        )
         with pytest.raises(ValueError, match="bucket"):
             parse_enrichment_output(output)
 
     def test_accepts_all_valid_buckets(self) -> None:
         """All four valid buckets are accepted."""
         for bucket in ("Task", "Idea", "Reference", "Question"):
-            output = json.dumps({
-                "bucket": bucket,
-                "enriched_text": "text",
-                "tags": [],
-                "wikilinks": [],
-            })
+            output = json.dumps(
+                {
+                    "bucket": bucket,
+                    "enriched_text": "text",
+                    "tags": [],
+                    "wikilinks": [],
+                }
+            )
             result = parse_enrichment_output(output)
             assert result["bucket"] == bucket
 
@@ -98,17 +109,17 @@ class TestEnrichmentPrompt:
 class TestEnrichCapture:
     """Tests for enrich_capture pipeline."""
 
-    def test_sets_status_enriching_then_enriched_on_success(
-        self, db: sqlite3.Connection
-    ) -> None:
+    def test_sets_status_enriching_then_enriched_on_success(self, db: sqlite3.Connection) -> None:
         """On success: status goes unprocessed → enriching → enriched."""
         capture_id = save_capture("Remind me to buy milk", conn=db)
-        mock_output = json.dumps({
-            "bucket": "Task",
-            "enriched_text": "Buy milk — an actionable task",
-            "tags": ["errands"],
-            "wikilinks": ["[[Shopping]]"],
-        })
+        mock_output = json.dumps(
+            {
+                "bucket": "Task",
+                "enriched_text": "Buy milk — an actionable task",
+                "tags": ["errands"],
+                "wikilinks": ["[[Shopping]]"],
+            }
+        )
 
         mock_result = MagicMock()
         mock_result.returncode = 0
@@ -140,9 +151,7 @@ class TestEnrichCapture:
         capture = get_capture(capture_id, conn=db)
         assert capture["status"] == "unprocessed"
 
-    def test_resets_status_on_failure_with_existing_capture(
-        self, db: sqlite3.Connection
-    ) -> None:
+    def test_resets_status_on_failure_with_existing_capture(self, db: sqlite3.Connection) -> None:
         """On subprocess failure with existing capture: status resets to unprocessed."""
         capture_id = save_capture("Test thought", conn=db)
 
@@ -159,9 +168,7 @@ class TestEnrichCapture:
         capture = get_capture(capture_id, conn=db)
         assert capture["status"] == "unprocessed"
 
-    def test_timeout_resets_status_to_unprocessed(
-        self, db: sqlite3.Connection
-    ) -> None:
+    def test_timeout_resets_status_to_unprocessed(self, db: sqlite3.Connection) -> None:
         """On subprocess timeout: status resets to unprocessed and RuntimeError raised."""
         capture_id = save_capture("Test thought", conn=db)
 
@@ -177,9 +184,7 @@ class TestEnrichCapture:
         capture = get_capture(capture_id, conn=db)
         assert capture["status"] == "unprocessed"
 
-    def test_raises_value_error_for_missing_capture(
-        self, db: sqlite3.Connection
-    ) -> None:
+    def test_raises_value_error_for_missing_capture(self, db: sqlite3.Connection) -> None:
         """enrich_capture raises ValueError if capture not found."""
         with pytest.raises(ValueError, match="not found"):
             enrich_capture("nonexistent-id", conn=db)
@@ -190,12 +195,14 @@ class TestEnrichCapture:
 
         mock_result = MagicMock()
         mock_result.returncode = 0
-        mock_result.stdout = json.dumps({
-            "bucket": "Task",
-            "enriched_text": "text",
-            "tags": [],
-            "wikilinks": [],
-        })
+        mock_result.stdout = json.dumps(
+            {
+                "bucket": "Task",
+                "enriched_text": "text",
+                "tags": [],
+                "wikilinks": [],
+            }
+        )
 
         with patch("quick_capture.enrich.subprocess.run", return_value=mock_result) as mock_run:
             enrich_capture(capture_id, conn=db)
@@ -217,7 +224,6 @@ class TestEnrichCliFlag:
             "tags": [],
             "wikilinks": [],
         }
-        from quick_capture.cli import main
 
         with (
             patch("sys.argv", ["quick-capture", "--enrich", "test-id"]),
@@ -234,7 +240,6 @@ class TestEnrichCliFlag:
 
     def test_enrich_flag_exits_1_on_failure(self) -> None:
         """--enrich flag prints error and exits with 1 on failure."""
-        from quick_capture.cli import main
 
         with (
             patch("sys.argv", ["quick-capture", "--enrich", "bad-id"]),
@@ -247,4 +252,3 @@ class TestEnrichCliFlag:
             with pytest.raises(SystemExit):
                 main()
             mock_exit.assert_called_with(1)
-

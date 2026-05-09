@@ -77,4 +77,3 @@ def main() -> None:
     except Exception:  # noqa: BLE001
         console.print("[red]✗ Failed to save[/red] — check nexus.db")
         sys.exit(1)
-

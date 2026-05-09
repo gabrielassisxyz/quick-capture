@@ -96,4 +96,4 @@ None — all data paths are wired end-to-end.
 ## Verification
 
 - `uv run pytest tests/ -x` — all 46 Python tests pass
-- `cd ~/repositories/nexus && npm run build` — Nexus builds without errors
+- `cd ~/repositories/nexus && npm run build` — Nexus builds without errors## Self-Check: PASSED

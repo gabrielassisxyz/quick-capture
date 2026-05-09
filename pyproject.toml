@@ -55,7 +55,7 @@ select = ["ALL"]
 ignore = ["D", "COM812", "ISC001"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "PLR2004", "SLF001"]
+"tests/**/*.py" = ["S101", "PLR2004", "SLF001", "ANN001", "ANN201"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
