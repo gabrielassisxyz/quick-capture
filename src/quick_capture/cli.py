@@ -1,5 +1,6 @@
 """Quick Capture CLI — floating terminal inbox capture."""
 
+import argparse
 import sys
 
 from prompt_toolkit import prompt
@@ -8,6 +9,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from quick_capture.db import save_capture
+from quick_capture.enrich import enrich_capture
 
 console = Console()
 
@@ -46,7 +48,20 @@ def run_capture_tui() -> str | None:
 
 
 def main() -> None:
-    """Entry point: run TUI, save to DB, exit."""
+    """Entry point: run TUI or enrich via --enrich flag."""
+    parser = argparse.ArgumentParser(description="Quick Capture — frictionless inbox capture")
+    parser.add_argument("--enrich", metavar="CAPTURE_ID", help="Enrich a capture by ID")
+    args = parser.parse_args()
+
+    if args.enrich:
+        try:
+            result = enrich_capture(args.enrich)
+            console.print(f"[green]✓ Enriched[/green] (bucket: {result['bucket']})")
+            sys.exit(0)
+        except (ValueError, RuntimeError) as e:
+            console.print(f"[red]✗ Enrichment failed:[/red] {e}")
+            sys.exit(1)
+
     try:
         text = run_capture_tui()
         if text:
@@ -62,3 +77,4 @@ def main() -> None:
     except Exception:  # noqa: BLE001
         console.print("[red]✗ Failed to save[/red] — check nexus.db")
         sys.exit(1)
+

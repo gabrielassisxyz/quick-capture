@@ -1,7 +1,9 @@
 """Tests for the CLI/TUI module."""
 
 import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
+
+import pytest
 
 from quick_capture.cli import main, run_capture_tui
 
@@ -40,27 +42,34 @@ class TestMain:
     def test_saves_and_exits_on_capture(self):
         """Successful capture calls save_capture and exits with 0."""
         with (
+            patch("sys.argv", ["quick-capture"]),
             patch("quick_capture.cli.prompt", return_value="My thought"),
             patch("quick_capture.cli.save_capture", return_value="abc-123-def"),
-            patch.object(sys, "exit") as mock_exit,
+            patch.object(sys, "exit", side_effect=SystemExit) as mock_exit,
         ):
-            main()
+            with pytest.raises(SystemExit):
+                main()
             mock_exit.assert_called_with(0)
 
     def test_cancels_and_exits_on_none(self):
         """Cancel (None from TUI) prints Cancelled and exits with 0."""
         with (
+            patch("sys.argv", ["quick-capture"]),
             patch("quick_capture.cli.prompt", side_effect=KeyboardInterrupt),
-            patch.object(sys, "exit") as mock_exit,
+            patch.object(sys, "exit", side_effect=SystemExit) as mock_exit,
         ):
-            main()
+            with pytest.raises(SystemExit):
+                main()
             mock_exit.assert_called_with(0)
 
     def test_rejects_oversized_input(self):
         """Input over 10KB is rejected with error exit."""
         with (
+            patch("sys.argv", ["quick-capture"]),
             patch("quick_capture.cli.prompt", return_value="x" * 10001),
-            patch.object(sys, "exit") as mock_exit,
+            patch.object(sys, "exit", side_effect=SystemExit) as mock_exit,
         ):
-            main()
+            with pytest.raises(SystemExit):
+                main()
             mock_exit.assert_called_with(1)
+
