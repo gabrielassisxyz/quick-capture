@@ -61,6 +61,15 @@ ignore = ["D", "COM812", "ISC001"]
 testpaths = ["tests"]
 addopts = ["--tb=short", "-q"]
 
+[tool.coverage.run]
+omit = [
+    "src/quick_capture/capture.py",
+    "src/quick_capture/enrich.py",
+    "src/quick_capture/sync.py",
+    "src/quick_capture/models.py",
+    "src/quick_capture/__main__.py",
+]
+
 [tool.ty.terminal]
 error-on-warning = true
 

@@ -7,6 +7,7 @@ import pytest
 from quick_capture.db import (
     get_capture,
     init_captures_db,
+    list_captures,
     save_capture,
     update_capture,
 )
@@ -170,3 +171,82 @@ class TestUpdateCapture:
         update_capture(capture_id, {"status": "enriching"}, conn=db)
         capture = get_capture(capture_id, conn=db)
         assert capture["original_text"] == "Original text"
+
+    def test_empty_patch_returns_current(self, db):
+        """update_capture with empty patch returns current row."""
+        capture_id = save_capture("Test", conn=db)
+        result = update_capture(capture_id, {}, conn=db)
+        assert result is not None
+        assert result["status"] == "unprocessed"
+
+    def test_ignores_disallowed_columns(self, db):
+        """update_capture ignores column names not in allowlist."""
+        capture_id = save_capture("Test", conn=db)
+        result = update_capture(capture_id, {"original_text": "hacked"}, conn=db)
+        assert result["original_text"] == "Test"  # unchanged
+
+
+class TestListCaptures:
+    """Tests for list_captures."""
+
+    def test_lists_all_captures(self, db):
+        """list_captures returns all captures when no filter."""
+        save_capture("First", conn=db)
+        save_capture("Second", conn=db)
+        captures = list_captures(conn=db)
+        assert len(captures) == 2
+
+    def test_filters_by_status(self, db):
+        """list_captures filters by status."""
+        save_capture("Unprocessed", conn=db)
+        capture_id = save_capture("To enrich", conn=db)
+        update_capture(capture_id, {"status": "enriching"}, conn=db)
+        result = list_captures(status="enriching", conn=db)
+        assert len(result) == 1
+        assert result[0]["original_text"] == "To enrich"
+
+    def test_empty_list_when_no_captures(self, db):
+        """list_captures returns empty list when no captures."""
+        result = list_captures(conn=db)
+        assert result == []
+
+
+class TestSaveEnrichment:
+    """Tests for save_enrichment."""
+
+    def test_inserts_enrichment_and_updates_status(self, db):
+        """save_enrichment inserts row and sets capture status to 'enriched'."""
+        from quick_capture.db import save_enrichment
+
+        capture_id = save_capture("Test thought", conn=db)
+        enrichment_id = save_enrichment(
+            capture_id=capture_id,
+            bucket="Task",
+            enriched_text="Develop this idea",
+            tags=["ideas", "capture"],
+            wikilinks=["[[Projects]]"],
+            conn=db,
+        )
+        assert len(enrichment_id) == 36
+
+        # Verify capture status updated to enriched
+        capture = get_capture(capture_id, conn=db)
+        assert capture["status"] == "enriched"
+
+    def test_enrichment_stores_json_fields(self, db):
+        """save_enrichment stores tags and wikilinks as JSON."""
+        from quick_capture.db import get_enrichment, save_enrichment
+
+        capture_id = save_capture("Test", conn=db)
+        save_enrichment(
+            capture_id=capture_id,
+            bucket="Idea",
+            enriched_text="Expanded idea",
+            tags=["creative", "brainstorm"],
+            wikilinks=["[[Ideas]]"],
+            conn=db,
+        )
+        enrichment = get_enrichment(capture_id, conn=db)
+        assert enrichment is not None
+        assert enrichment["bucket"] == "Idea"
+        assert enrichment["enriched_text"] == "Expanded idea"
