@@ -43,6 +43,7 @@ Plans:
 
 **Goal:** Every capture lives in the wiki (individual pages + rollups) and references route to Karakeep
 **Mode:** mvp
+**Plans:** 2 plans
 **Success Criteria:**
 1. Each capture creates a wiki page under `wiki/inbox/` with proper frontmatter and source: inbox
 2. Daily rollup page aggregates all captures for that day
@@ -56,6 +57,13 @@ Plans:
 | STOR-04 | Phase 2 | Pending |
 | STOR-05 | Phase 2 | Pending |
 | REVW-03 | Phase 2 | Pending |
+
+Plans:
+**Wave 1**
+- [ ] 02-01-PLAN.md — Wiki sync pipeline: inbox pages, daily/weekly rollups, sync_log, CLI --sync (STOR-03, STOR-04, STOR-05)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 02-02-PLAN.md — Karakeep dispatch: Reference bookmark creation, graceful degradation, sync integration (REVW-03)
 
 ## Phase 3: Flexible Processing
 
