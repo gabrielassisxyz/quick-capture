@@ -2,36 +2,36 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 01
-status: complete
-last_updated: "2026-05-09T23:50:00.000Z"
+current_phase: 02
+status: ready
+last_updated: "2026-05-09T24:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
+  total_plans: 5
   completed_plans: 3
-  percent: 100
+  percent: 60
 ---
 
 # State: Quick Capture
 
 **Last updated:** 2026-05-09
-**Current phase:** 01 (complete)
-**Project status:** Phase 1 complete
+**Current phase:** 02 (ready)
+**Project status:** Phase 2 planned — ready to execute
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Capture a thought in under 5 seconds, from hotkey to saved entry.
-**Current focus:** Phase 1 complete — ready for Phase 2
+**Current focus:** Phase 2 planned — Wiki Sync & Karakeep
 
 ## Phase Progress
 
 | Phase | Name | Status | Plans | Progress |
 |-------|------|--------|-------|----------|
 | 1 | Capture & Enrich MVP | ✓ Complete | 3/3 | 100% |
-| 2 | Wiki Sync & Karakeep | ○ Not started | 0/0 | 0% |
+| 2 | Wiki Sync & Karakeep | ◆ Planned | 2/- | 0% |
 | 3 | Flexible Processing | ○ Not started | 0/0 | 0% |
 | 4 | Dispatch Discussion | ○ Not started | 0/0 | 0% |
 

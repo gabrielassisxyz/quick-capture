@@ -523,24 +523,24 @@ def create_daily_rollup(
 | A4 | Tags from enrichment are simple strings (no nesting) that can go directly into Karakeep `tags` field | Karakeep Integration | Tags may not match Karakeep's tag format; Karakeep auto-creates tags by name |
 | A5 | The `note` field in Karakeep bookmarks is the right place for intent retrieval notes | Karakeep Integration | Notes might be truncated or displayed differently; need to test |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Sync Trigger Timing**
+1. **Sync Trigger Timing (RESOLVED: explicit CLI command)**
    - What we know: Capture must be under 5 seconds. Enrichment is already a separate step (Phase 1).
    - What's unclear: Should wiki sync run automatically after enrichment completes? Or should it require an explicit trigger?
-   - Recommendation: Make sync an explicit CLI command (`quick-capture sync`) that can also be called programmatically. Auto-sync after enrichment is a Phase 3 concern (batch processing).
+   - Recommendation: Make sync an explicit CLI command (`quick-capture --sync`) that can also be called programmatically. Auto-sync after enrichment is a Phase 3 concern (batch processing).
 
-2. **Rollup Naming Convention**
+2. **Rollup Naming Convention (RESOLVED: ISO date format)**
    - What we know: The wiki uses date-based naming (`2026-04-23`). Folds use `fold-k3-from-...` pattern.
    - What's unclear: Should rollup names follow ISO date (`2026-05-09.md`) or include a prefix (`daily-2026-05-09.md`)?
    - Recommendation: Use plain ISO date for daily rollups (`2026-05-09.md`) and ISO week for weekly (`2026-W19.md`), consistent with the date-based naming already used in the wiki. The rollup directory (`inbox/rollups/daily/` and `inbox/rollups/weekly/`) provides the context, so the filename doesn't need a prefix.
 
-3. **Karakeep URL vs Text Bookmark for References**
+3. **Karakeep URL vs Text Bookmark for References (RESOLVED: auto-detect)**
    - What we know: References are "facts, links, or information to store for later lookup" (from enrichment prompt). Some may contain URLs, others are pure text.
    - What's unclear: Should URL-containing references use `type: "link"` instead of `type: "text"`?
    - Recommendation: Auto-detect URLs in the capture text. If the Reference capture contains a URL, use `type: "link"` with `url` field. If it's pure text, use `type: "text"`. This matches Karakeep's design intent.
 
-4. **Sync Status Tracking**
+4. **Sync Status Tracking (RESOLVED: sync_log table)**
    - What we know: We need to know which captures have been synced to avoid duplicates.
    - What's unclear: Should we add a `sync_status` column to captures, a separate `sync_log` table, or rely solely on filesystem checks (page exists with matching `capture_id`)?
    - Recommendation: Add a lightweight `sync_log` table to nexus.db (minimal schema: capture_id, target, synced_at). This provides query-level idempotency without modifying the captures table. The captures table status stays as-enriched — sync is an outbound concern.
