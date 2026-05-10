@@ -10,6 +10,7 @@ from rich.panel import Panel
 
 from quick_capture.db import save_capture
 from quick_capture.enrich import enrich_capture
+from quick_capture.sync import sync_all_to_wiki
 
 console = Console()
 
@@ -48,9 +49,10 @@ def run_capture_tui() -> str | None:
 
 
 def main() -> None:
-    """Entry point: run TUI or enrich via --enrich flag."""
+    """Entry point: run TUI, enrich via --enrich, or sync via --sync flag."""
     parser = argparse.ArgumentParser(description="Quick Capture — frictionless inbox capture")
     parser.add_argument("--enrich", metavar="CAPTURE_ID", help="Enrich a capture by ID")
+    parser.add_argument("--sync", action="store_true", help="Sync enriched captures to wiki")
     args = parser.parse_args()
 
     if args.enrich:
@@ -61,6 +63,14 @@ def main() -> None:
         except (ValueError, RuntimeError) as e:
             console.print(f"[red]✗ Enrichment failed:[/red] {e}")
             sys.exit(1)
+
+    if args.sync:
+        count = sync_all_to_wiki()
+        if count == 0:
+            console.print("[dim]No enriched captures to sync[/dim]")
+        else:
+            console.print(f"[green]✓ Synced[/green] {count} capture(s) to wiki")
+        sys.exit(0)
 
     try:
         text = run_capture_tui()

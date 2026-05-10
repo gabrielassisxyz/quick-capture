@@ -50,9 +50,18 @@ def init_captures_db(db_path: str | None = None) -> sqlite3.Connection:
             created_at TEXT NOT NULL,
             FOREIGN KEY (capture_id) REFERENCES captures(id) ON DELETE CASCADE
         );
+        CREATE TABLE IF NOT EXISTS sync_log (
+            id TEXT PRIMARY KEY,
+            capture_id TEXT NOT NULL,
+            target TEXT NOT NULL,
+            synced_at TEXT NOT NULL,
+            FOREIGN KEY (capture_id) REFERENCES captures(id) ON DELETE CASCADE
+        );
         CREATE INDEX IF NOT EXISTS idx_captures_status ON captures(status);
         CREATE INDEX IF NOT EXISTS idx_captures_created ON captures(created_at);
         CREATE INDEX IF NOT EXISTS idx_enrichments_capture ON capture_enrichments(capture_id);
+        CREATE INDEX IF NOT EXISTS idx_sync_log_capture ON sync_log(capture_id);
+        CREATE INDEX IF NOT EXISTS idx_sync_log_target ON sync_log(target);
     """
     )
     conn.commit()
@@ -251,3 +260,65 @@ def save_enrichment(  # noqa: PLR0913
         if conn is None:
             c.close()
     return enrichment_id
+
+
+def log_sync(capture_id: str, target: str, conn: sqlite3.Connection | None = None) -> str:
+    """Record that a capture has been synced to a target. Returns sync log ID."""
+    sync_id = str(uuid.uuid4())
+    now = datetime.now(tz=UTC).isoformat()
+
+    c = conn or sqlite3.connect(str(NEXUS_DB))
+    try:
+        c.execute(
+            "INSERT INTO sync_log (id, capture_id, target, synced_at) VALUES (?, ?, ?, ?)",
+            (sync_id, capture_id, target, now),
+        )
+        c.commit()
+    finally:
+        if conn is None:
+            c.close()
+    return sync_id
+
+
+def is_synced(capture_id: str, target: str, conn: sqlite3.Connection | None = None) -> bool:
+    """Check if a capture has been synced to a specific target."""
+    c = conn or sqlite3.connect(str(NEXUS_DB))
+    c.row_factory = sqlite3.Row
+    try:
+        row = c.execute(
+            "SELECT id FROM sync_log WHERE capture_id = ? AND target = ?",
+            (capture_id, target),
+        ).fetchone()
+        return row is not None
+    finally:
+        if conn is None:
+            c.close()
+
+
+def get_unsynced_captures(
+    target: str = "wiki", conn: sqlite3.Connection | None = None
+) -> list[dict[str, Any]]:
+    """Get enriched captures not yet synced to the given target.
+
+    LEFT JOINs captures + capture_enrichments with sync_log to find
+    enriched captures that have no sync_log entry for the target.
+    """
+    c = conn or sqlite3.connect(str(NEXUS_DB))
+    c.row_factory = sqlite3.Row
+    try:
+        rows = c.execute(
+            """
+            SELECT c.id, c.original_text, c.status, c.created_at, c.updated_at,
+                   e.bucket, e.enriched_text, e.tags, e.wikilinks
+            FROM captures c
+            JOIN capture_enrichments e ON c.id = e.capture_id
+            LEFT JOIN sync_log sl ON c.id = sl.capture_id AND sl.target = ?
+            WHERE sl.id IS NULL AND c.status = 'enriched'
+            ORDER BY c.created_at
+            """,
+            (target,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        if conn is None:
+            c.close()
