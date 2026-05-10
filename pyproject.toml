@@ -20,7 +20,9 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
+    "httpx>=0.28.1",
     "prompt-toolkit>=3.0.52",
+    "python-frontmatter>=1.1.0",
     "rich>=13.0.0",
 ]
 

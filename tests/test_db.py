@@ -5,8 +5,11 @@ import pytest
 from quick_capture.db import (
     get_capture,
     get_enrichment,
+    get_unsynced_captures,
     init_captures_db,
+    is_synced,
     list_captures,
+    log_sync,
     save_capture,
     save_enrichment,
     update_capture,
@@ -246,3 +249,81 @@ class TestSaveEnrichment:
         assert enrichment is not None
         assert enrichment["bucket"] == "Idea"
         assert enrichment["enriched_text"] == "Expanded idea"
+
+
+class TestSyncLog:
+    """Tests for sync_log table and query functions."""
+
+    def test_sync_log_table_created(self, db):
+        """init_captures_db creates sync_log table with expected columns."""
+        cursor = db.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='sync_log'"
+        )
+        assert cursor.fetchone() is not None
+        # Verify columns exist
+        columns = [
+            row[1]
+            for row in db.execute("PRAGMA table_info(sync_log)").fetchall()
+        ]
+        assert "id" in columns
+        assert "capture_id" in columns
+        assert "target" in columns
+        assert "synced_at" in columns
+
+    def test_log_sync_inserts_record(self, db):
+        """log_sync inserts a row and returns a UUID string."""
+        capture_id = save_capture("Sync test", conn=db)
+        sync_id = log_sync(capture_id, "wiki", conn=db)
+        assert sync_id is not None
+        assert len(sync_id) == 36
+        # Verify record exists
+        row = db.execute(
+            "SELECT * FROM sync_log WHERE capture_id = ? AND target = ?",
+            (capture_id, "wiki"),
+        ).fetchone()
+        assert row is not None
+
+    def test_is_synced_returns_true_after_log(self, db):
+        """is_synced returns True after log_sync for that target."""
+        capture_id = save_capture("Sync check", conn=db)
+        log_sync(capture_id, "wiki", conn=db)
+        assert is_synced(capture_id, "wiki", conn=db) is True
+
+    def test_is_synced_returns_false_before_log(self, db):
+        """is_synced returns False when no sync_log entry exists."""
+        capture_id = save_capture("Not yet synced", conn=db)
+        assert is_synced(capture_id, "wiki", conn=db) is False
+
+    def test_get_unsynced_captures_returns_enriched_only(self, db):
+        """get_unsynced_captures returns enriched captures not yet synced to wiki."""
+        # Create and enrich a capture
+        capture_id = save_capture("Enriched thought", conn=db)
+        save_enrichment(
+            capture_id=capture_id,
+            bucket="Idea",
+            enriched_text="Expanded idea",
+            tags=["test"],
+            wikilinks=["[[Test]]"],
+            conn=db,
+        )
+        # It should appear in unsynced list
+        unsynced = get_unsynced_captures(target="wiki", conn=db)
+        assert len(unsynced) == 1
+        assert unsynced[0]["id"] == capture_id
+
+    def test_get_unsynced_captures_excludes_synced(self, db):
+        """get_unsynced_captures excludes captures already synced to wiki."""
+        capture_id = save_capture("Already synced", conn=db)
+        save_enrichment(
+            capture_id=capture_id,
+            bucket="Task",
+            enriched_text="Done idea",
+            tags=["test"],
+            wikilinks=["[[Done]]"],
+            conn=db,
+        )
+        # Mark as synced
+        log_sync(capture_id, "wiki", conn=db)
+        # Should not appear in unsynced list
+        unsynced = get_unsynced_captures(target="wiki", conn=db)
+        assert len(unsynced) == 0
