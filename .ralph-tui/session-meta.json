@@ -2,13 +2,13 @@
   "id": "71fd6687-99d7-4c20-9127-560f007711f2",
   "status": "running",
   "startedAt": "2026-05-11T20:49:14.886Z",
-  "updatedAt": "2026-05-11T20:49:14.886Z",
+  "updatedAt": "2026-05-11T21:01:37.711Z",
   "agentPlugin": "opencode",
   "trackerPlugin": "beads",
   "epicId": "quick-capture-66h",
-  "currentIteration": 0,
+  "currentIteration": 1,
   "maxIterations": 10,
   "totalTasks": 0,
-  "tasksCompleted": 0,
+  "tasksCompleted": 1,
   "cwd": "/home/gabriel/repositories/quick-capture"
 }

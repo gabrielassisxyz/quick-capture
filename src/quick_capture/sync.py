@@ -14,6 +14,7 @@ from typing import Any
 import frontmatter
 
 from quick_capture.db import get_enrichment, get_unsynced_captures, log_sync
+from quick_capture.karakeep import sync_reference_to_karakeep
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +214,11 @@ def sync_capture_to_wiki(
     conn: object | None = None,
     vault_path: Path | None = None,
 ) -> Path | None:
-    """Sync a single capture to wiki. Returns path or None on failure."""
+    """Sync a single capture to wiki. Returns path or None on failure.
+
+    After wiki sync, Reference-classified captures are dispatched to Karakeep.
+    Karakeep failures are logged as warnings and do not affect the return value.
+    """
     try:
         enrichment = get_enrichment(capture_id, conn=conn)
         if enrichment is None:
@@ -241,8 +246,17 @@ def sync_capture_to_wiki(
     except Exception:
         logger.exception("Failed to sync capture %s to wiki", capture_id)
         return None
-    else:
-        return path
+
+    if enrichment["bucket"] == "Reference":
+        sync_reference_to_karakeep(
+            capture_id=capture_id,
+            text=enrichment["original_text"],
+            enriched_text=enrichment["enriched_text"],
+            tags=tags,
+            conn=conn,
+        )
+
+    return path
 
 
 def sync_all_to_wiki(

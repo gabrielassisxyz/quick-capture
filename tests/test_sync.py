@@ -1,18 +1,21 @@
 """Tests for wiki sync module."""
 
 import json
-from datetime import UTC, date, datetime
+from datetime import date
+from unittest.mock import MagicMock, patch
 
 import frontmatter
+import httpx
 import pytest
 
-from quick_capture.db import get_enrichment, init_captures_db, save_capture, save_enrichment
+from quick_capture.db import get_enrichment, is_synced, save_capture, save_enrichment
 from quick_capture.sync import (
     _validate_vault_path,
     create_daily_rollup,
     create_inbox_page,
     create_weekly_rollup,
     sync_all_to_wiki,
+    sync_capture_to_wiki,
 )
 
 
@@ -274,3 +277,85 @@ class TestSyncAllToWiki:
         assert count1 == 1
         count2 = sync_all_to_wiki(conn=db, vault_path=vault_path)
         assert count2 == 0
+
+
+class TestSyncCaptureToWikiKarakeep:
+    """Tests for Karakeep dispatch integration in sync_capture_to_wiki."""
+
+    @patch("quick_capture.karakeep.KARAKEEP_API_KEY", "kk_test_key")
+    @patch("quick_capture.karakeep.httpx.post")
+    def test_dispatches_reference_to_karakeep(self, mock_post, db, vault_path):
+        """Reference-classified captures are dispatched to Karakeep after wiki sync."""
+        mock_post.return_value = MagicMock(
+            json=lambda: {"id": "bm1"}, raise_for_status=MagicMock()
+        )
+        cid = save_capture("Read https://example.com/article", conn=db)
+        save_enrichment(
+            capture_id=cid,
+            bucket="Reference",
+            enriched_text="Great article about Python",
+            tags=["python", "reference"],
+            wikilinks=[],
+            conn=db,
+        )
+        result = sync_capture_to_wiki(capture_id=cid, conn=db, vault_path=vault_path)
+        assert result is not None
+        mock_post.assert_called_once()
+        call_kwargs = mock_post.call_args.kwargs
+        assert call_kwargs["json"]["title"] == "Read https://example.com/article"
+        assert call_kwargs["json"]["note"] == "Great article about Python"
+
+    def test_skips_karakeep_for_non_reference(self, db, vault_path):
+        """Non-Reference captures are NOT dispatched to Karakeep."""
+        cid = save_capture("A brilliant idea", conn=db)
+        save_enrichment(
+            capture_id=cid,
+            bucket="Idea",
+            enriched_text="Expanded idea",
+            tags=["idea"],
+            wikilinks=["[[Ideas]]"],
+            conn=db,
+        )
+        with patch("quick_capture.karakeep.sync_reference_to_karakeep") as mock_kk:
+            result = sync_capture_to_wiki(capture_id=cid, conn=db, vault_path=vault_path)
+        assert result is not None
+        mock_kk.assert_not_called()
+
+    @patch("quick_capture.karakeep.KARAKEEP_API_KEY", "kk_test_key")
+    @patch("quick_capture.karakeep.httpx.post")
+    def test_sync_log_records_karakeep_target(self, mock_post, db, vault_path):
+        """After Karakeep dispatch, sync_log records 'karakeep' as target."""
+        mock_post.return_value = MagicMock(
+            json=lambda: {"id": "bm2"}, raise_for_status=MagicMock()
+        )
+        cid = save_capture("Check https://example.com", conn=db)
+        save_enrichment(
+            capture_id=cid,
+            bucket="Reference",
+            enriched_text="Notes on the link",
+            tags=[],
+            wikilinks=[],
+            conn=db,
+        )
+        sync_capture_to_wiki(capture_id=cid, conn=db, vault_path=vault_path)
+        assert is_synced(cid, "karakeep", conn=db) is True
+        assert is_synced(cid, "wiki", conn=db) is True
+
+    @patch("quick_capture.karakeep.KARAKEEP_API_KEY", "kk_test_key")
+    @patch("quick_capture.karakeep.httpx.post")
+    def test_wiki_sync_continues_on_karakeep_failure(self, mock_post, db, vault_path):
+        """Karakeep failures do NOT prevent wiki sync success."""
+        mock_post.side_effect = httpx.ConnectError("Connection refused")
+        cid = save_capture("Reference https://example.com", conn=db)
+        save_enrichment(
+            capture_id=cid,
+            bucket="Reference",
+            enriched_text="Ref notes",
+            tags=[],
+            wikilinks=[],
+            conn=db,
+        )
+        result = sync_capture_to_wiki(capture_id=cid, conn=db, vault_path=vault_path)
+        assert result is not None
+        assert is_synced(cid, "wiki", conn=db) is True
+        assert is_synced(cid, "karakeep", conn=db) is False
