@@ -1,0 +1,14 @@
+configVersion = "2.1"
+maxIterations = 10
+agent = "opencode"
+tracker = "beads"
+autoCommit = true
+subagentTracingDetail = "full"
+
+[agentOptions]
+[trackerOptions]
+beadsDir = ".beads"
+
+[parallel]
+mode = "auto"
+maxWorkers = 6

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "sessionId": "71fd6687-99d7-4c20-9127-560f007711f2",
+  "status": "running",
+  "startedAt": "2026-05-11T20:49:16.845Z",
+  "updatedAt": "2026-05-11T20:49:28.101Z",
+  "currentIteration": 0,
+  "maxIterations": 10,
+  "tasksCompleted": 0,
+  "isPaused": false,
+  "agentPlugin": "opencode",
+  "trackerState": {
+    "plugin": "beads",
+    "epicId": "quick-capture-66h",
+    "totalTasks": 2,
+    "tasks": [
+      {
+        "id": "quick-capture-66h.1",
+        "title": "US-002: Integrate Karakeep dispatch into sync pipeline",
+        "status": "open",
+        "completedInSession": false
+      },
+      {
+        "id": "quick-capture-66h.2",
+        "title": "US-001: Karakeep HTTP client and tests",
+        "status": "open",
+        "completedInSession": false
+      }
+    ]
+  },
+  "iterations": [],
+  "skippedTaskIds": [],
+  "cwd": "/home/gabriel/repositories/quick-capture",
+  "activeTaskIds": [
+    "quick-capture-66h.2"
+  ],
+  "subagentPanelVisible": false
+}
