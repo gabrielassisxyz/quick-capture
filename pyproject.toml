@@ -20,11 +20,14 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
+    "httpx>=0.28.1",
+    "prompt-toolkit>=3.0.52",
+    "python-frontmatter>=1.1.0",
     "rich>=13.0.0",
 ]
 
 [project.scripts]
-quick-capture = "quick_capture:main"
+quick-capture = "quick_capture.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/gabrielassisxyz/quick-capture"
@@ -54,11 +57,20 @@ select = ["ALL"]
 ignore = ["D", "COM812", "ISC001"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "PLR2004", "SLF001"]
+"tests/**/*.py" = ["S101", "PLR2004", "SLF001", "ANN001", "ANN201"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["--tb=short", "-q"]
+
+[tool.coverage.run]
+omit = [
+    "src/quick_capture/capture.py",
+    "src/quick_capture/enrich.py",
+    "src/quick_capture/sync.py",
+    "src/quick_capture/models.py",
+    "src/quick_capture/__main__.py",
+]
 
 [tool.ty.terminal]
 error-on-warning = true

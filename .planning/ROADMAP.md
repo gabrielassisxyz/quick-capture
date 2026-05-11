@@ -16,33 +16,34 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAPT-01 | Phase 1 | Pending |
-| CAPT-02 | Phase 1 | Pending |
-| CAPT-03 | Phase 1 | Pending |
-| CAPT-04 | Phase 1 | Pending |
-| STOR-01 | Phase 1 | Pending |
-| STOR-02 | Phase 1 | Pending |
-| ENRI-01 | Phase 1 | Pending |
-| ENRI-02 | Phase 1 | Pending |
-| ENRI-03 | Phase 1 | Pending |
-| ENRI-04 | Phase 1 | Pending |
-| ENRI-05 | Phase 1 | Pending |
-| REVW-01 | Phase 1 | Pending |
+| CAPT-01 | Phase 1 | ✓ Complete |
+| CAPT-02 | Phase 1 | ✓ Complete |
+| CAPT-03 | Phase 1 | ✓ Complete |
+| CAPT-04 | Phase 1 | ✓ Complete |
+| STOR-01 | Phase 1 | ✓ Complete |
+| STOR-02 | Phase 1 | ✓ Complete |
+| ENRI-01 | Phase 1 | ✓ Complete |
+| ENRI-02 | Phase 1 | ✓ Complete |
+| ENRI-03 | Phase 1 | ✓ Complete |
+| ENRI-04 | Phase 1 | ✓ Complete |
+| ENRI-05 | Phase 1 | ✓ Complete |
+| REVW-01 | Phase 1 | ✓ Complete |
 
 Plans:
 **Wave 1**
-- [ ] 01-01-PLAN.md — Capture Pipeline: Python project, DB module, TUI, Hyprland config (CAPT-01,02,03,04, STOR-01,02)
+- [x] 01-01-PLAN.md — Capture Pipeline: Python project, DB module, TUI, Hyprland config (CAPT-01,02,03,04, STOR-01,02)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01-02-PLAN.md — Nexus Capture View: API routes, schema, frontend cards, detail panel (REVW-01)
+- [x] 01-02-PLAN.md — Nexus Capture View: API routes, schema, frontend cards, detail panel (REVW-01)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01-03-PLAN.md — Enrichment Pipeline: opencode run subprocess, enrich API, CLI flag (ENRI-01,02,03,04,05)
+- [x] 01-03-PLAN.md — Enrichment Pipeline: opencode run subprocess, enrich API, CLI flag (ENRI-01,02,03,04,05)
 
 ## Phase 2: Wiki Sync & Karakeep
 
 **Goal:** Every capture lives in the wiki (individual pages + rollups) and references route to Karakeep
 **Mode:** mvp
+**Plans:** 2 plans
 **Success Criteria:**
 1. Each capture creates a wiki page under `wiki/inbox/` with proper frontmatter and source: inbox
 2. Daily rollup page aggregates all captures for that day
@@ -56,6 +57,13 @@ Plans:
 | STOR-04 | Phase 2 | Pending |
 | STOR-05 | Phase 2 | Pending |
 | REVW-03 | Phase 2 | Pending |
+
+Plans:
+**Wave 1**
+- [ ] 02-01-PLAN.md — Wiki sync pipeline: inbox pages, daily/weekly rollups, sync_log, CLI --sync (STOR-03, STOR-04, STOR-05)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 02-02-PLAN.md — Karakeep dispatch: Reference bookmark creation, graceful degradation, sync integration (REVW-03)
 
 ## Phase 3: Flexible Processing
 
