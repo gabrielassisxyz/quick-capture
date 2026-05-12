@@ -41,7 +41,7 @@ def _atomic_write(path: Path, content: str) -> None:
     try:
         with os.fdopen(fd, "w") as f:
             f.write(content)
-        os.replace(tmp_path, path)
+        Path(tmp_path).replace(path)
     except BaseException:
         with suppress(OSError):
             Path(tmp_path).unlink()
